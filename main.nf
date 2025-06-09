@@ -19,14 +19,18 @@ include { CONSENSUS_ASSEMBLY        } from './subworkflows/consensus_assembly'
 //
 // MODULES
 //
-include { SEQTK_SAMPLE      } from './modules/seqtk_sample'
-include { BBMAP_ALIGN_REF   } from './modules/bbmap_align_ref'
-include { IVAR_TRIM         } from './modules/ivar_trim'
-include { SAMTOOLS_SORT     } from './modules/samtools_sort'
-include { SAMTOOLS_INDEX    } from './modules/samtools_index'
-include { F13L_VARIANTS     } from './modules/f13l_variants'
-include { SUMMARY           } from './modules/summary'
-include { SUMMARY_CLEANUP   } from './modules/summary_cleanup'
+include { SEQTK_SAMPLE                  } from './modules/seqtk_sample'
+include { BBMAP_ALIGN_REF               } from './modules/bbmap_align_ref'
+include { IVAR_TRIM                     } from './modules/ivar_trim'
+include { SAMTOOLS_SORT                 } from './modules/samtools_sort'
+include { PICARD_ADDORREPLACEREADGROUPS } from './modules/addorreplacereadgroups'
+include { GATK_REALIGNERTARGETCREATOR   } from './modules/realignertargetcreator'
+include { GATK_INDELREALIGNER           } from './modules/indelrealigner'
+include { SAMTOOLS_INDEX                } from './modules/samtools_index'
+include { F13L_VARIANTS                 } from './modules/f13l_variants'
+include { SUMMARY                       } from './modules/summary'
+include { SUMMARY_CLEANUP               } from './modules/summary_cleanup'
+
 
 ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////
@@ -91,6 +95,12 @@ workflow {
         ch_bam = BBMAP_ALIGN_REF.out.bam
     }
 
+    PICARD_ADDORREPLACEREADGROUPS (
+        ch_bam.map{ [it[0],[it[1]]]},
+        [[],[]],
+        [[],[]]
+    )
+
     BBMAP_ALIGN_REF.out.flagstat                                                   
         .map { meta, flagstat -> [ meta ] + CheckReads.getFlagstatMappedReads(flagstat, params) }
         .set { ch_mapped_reads }
@@ -109,15 +119,43 @@ workflow {
     ch_mapped_reads
         .map { meta, mapped, pass -> if (pass) [ meta ] }
         .join(ch_align_reads, by: [0])
-        .join(ch_bam, by: [0])
+        .join(PICARD_ADDORREPLACEREADGROUPS.out.bam, by: [0])
         .multiMap { meta, reads, bam, bai ->
-            reads:  [ meta, reads ]
-            ref:    [ meta, params.ref ]
-            bam:    [ meta, bam, bai ]
+            reads:    [ meta, reads ]
+            ref:      [ meta, params.ref ]
+            ref_all:  [ meta, [params.ref], [params.ref_index], [params.ref_dict] ]
+            bam:      [ meta, bam, bai ]
         }.set { ch_variants_consensus }
 
-    F13L_VARIANTS (
+    GATK_REALIGNERTARGETCREATOR (
         ch_variants_consensus.bam,
+        ch_variants_consensus.ref_all.map{ [it[0], it[1]] },
+        ch_variants_consensus.ref_all.map{ [it[0], it[2]] },
+        ch_variants_consensus.ref_all.map{ [it[0], it[3]] },
+        [[],[]]
+    )
+
+    GATK_INDELREALIGNER (
+        ch_variants_consensus.bam.join(GATK_REALIGNERTARGETCREATOR.out.intervals),
+        ch_variants_consensus.ref_all.map{ [it[0], it[1]] },
+        ch_variants_consensus.ref_all.map{ [it[0], it[2]] },
+        ch_variants_consensus.ref_all.map{ [it[0], it[3]] },
+        [[],[]]
+    )
+
+    ch_mapped_reads
+        .map { meta, mapped, pass -> if (pass) [ meta ] }
+        .join(ch_align_reads, by: [0])
+        .join(GATK_INDELREALIGNER.out.bam, by: [0])
+        .multiMap { meta, reads, bam, bai ->
+            reads:    [ meta, reads ]
+            ref:      [ meta, params.ref ]
+            ref_all:  [ meta, [params.ref], [params.ref_index], [params.ref_dict] ]
+            bam:      [ meta, bam, bai ]
+        }.set { ch_realigned }
+
+    F13L_VARIANTS (
+        GATK_INDELREALIGNER.out.bam,
         params.ref,
         params.ref_index,
         params.gff,
@@ -125,13 +163,13 @@ workflow {
     )
 
     CONSENSUS_ASSEMBLY (
-        ch_variants_consensus.bam,
-        ch_variants_consensus.ref,
-        ch_variants_consensus.reads
+        ch_realigned.bam,
+        ch_realigned.ref,
+        ch_realigned.reads
     )
 
     CONSENSUS_ASSEMBLY.out.consensus
-        .join(ch_variants_consensus.bam)
+        .join(ch_realigned.bam)
         .join(FASTQ_TRIM_FASTP_FASTQC.out.trim_log)
         .set { ch_summary_in }
     

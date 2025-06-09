@@ -1,7 +1,7 @@
 process F13L_VARIANTS {
     tag "${meta.id}}"
     label 'process_medium'
-    container 'quay.io/jefffurlong/ivar:1.4.3'
+    container 'quay.io/jefffurlong/ivar:1.4.4'
 
     input:
     tuple val(meta), path(bam), path(bai)
