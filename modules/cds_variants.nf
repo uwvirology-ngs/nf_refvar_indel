@@ -1,4 +1,4 @@
-process F13L_VARIANTS {
+process CDS_VARIANTS {
     tag "${meta.id}"
     label 'process_medium'
     container 'quay.io/jefffurlong/ivar:1.4.4'
@@ -37,7 +37,7 @@ process F13L_VARIANTS {
             -r $ref \\
             -p $prefix
 
-    edit_f13l_variants.py \\
+    edit_cds_variants.py \\
         ${prefix}.tsv \\
         $gff \\
         $ref \\

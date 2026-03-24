@@ -57,7 +57,7 @@ nextflow run uwvirology-ngs/nf_refvar_indel -r realign_count_gaps -latest \
 |Parameter|Explanation| Example Value |
 |------|-----------|------|
 | `--input` | samplesheet in csv format with fastq information | example_samplesheet.csv |
-| `--output` | output directory (default: nf_mpxv_f13l_output) | example_output |
+| `--output` | output directory (default: nf_output) | example_output |
 | `--ref` | reference genome | assets/NC_045512.fa |
 | `--ref_index` | corresponding index file | assets/NC_045512.fa.fai |
 | `--gff` | general feature formal file | assets/NC_045512.gff |

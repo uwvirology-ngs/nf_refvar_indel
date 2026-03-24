@@ -27,7 +27,7 @@ include { PICARD_ADDORREPLACEREADGROUPS } from './modules/addorreplacereadgroups
 include { GATK_REALIGNERTARGETCREATOR   } from './modules/realignertargetcreator'
 include { GATK_INDELREALIGNER           } from './modules/indelrealigner'
 include { SAMTOOLS_INDEX                } from './modules/samtools_index'
-include { F13L_VARIANTS                 } from './modules/f13l_variants'
+include { CDS_VARIANTS                  } from './modules/cds_variants'
 include { SUMMARY                       } from './modules/summary'
 include { SUMMARY_CLEANUP               } from './modules/summary_cleanup'
 
@@ -154,7 +154,7 @@ workflow {
             bam:      [ meta, bam, bai ]
         }.set { ch_realigned }
 
-    F13L_VARIANTS (
+    CDS_VARIANTS (
         GATK_INDELREALIGNER.out.bam,
         params.ref,
         params.ref_index,
