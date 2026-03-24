@@ -35,17 +35,17 @@ process SUMMARY {
     mean_genome_coverage=\$(samtools coverage ${map_ref_bam} | awk 'NR>1' | cut -f7)
     mean_genome_coverage_formatted=\$(printf "%.2f" "\${mean_genome_coverage}")
     
-    # F13L coverage
-    pct_F13L_covered=\$(samtools coverage -r ${params.genomic_region} ${map_ref_bam} | awk 'NR>1' | cut -f6)
-    pct_F13L_covered_formatted=\$(printf "%.2f" "\${pct_F13L_covered}")
-    mean_F13L_coverage=\$(samtools coverage -r ${params.genomic_region} ${map_ref_bam} | awk 'NR>1' | cut -f7)
-    mean_F13L_coverage_formatted=\$(printf "%.2f" "\${mean_F13L_coverage}")
-    num_bases_F13L_50x=\$(samtools depth -r ${params.genomic_region} ${map_ref_bam} | awk '{if(\$3>50)print\$3}' | wc -l)
-    pct_F13L_50x=\$(echo "\${num_bases_F13L_50x}/${gene_length}*100" | bc -l)
-    pct_F13L_50x_formatted=\$(printf "%.2f" "\${pct_F13L_50x}")
-    num_bases_F13L_100x=\$(samtools depth -r ${params.genomic_region} ${map_ref_bam} | awk '{if(\$3>100)print\$3}' | wc -l)
-    pct_F13L_100x=\$(echo "\${num_bases_F13L_100x}/${gene_length}*100" | bc -l)
-    pct_F13L_100x_formatted=\$(printf "%.2f" "\${pct_F13L_100x}")
+    # cds coverage
+    pct_cds_covered=\$(samtools coverage -r ${params.genomic_region} ${map_ref_bam} | awk 'NR>1' | cut -f6)
+    pct_cds_covered_formatted=\$(printf "%.2f" "\${pct_cds_covered}")
+    mean_cds_coverage=\$(samtools coverage -r ${params.genomic_region} ${map_ref_bam} | awk 'NR>1' | cut -f7)
+    mean_cds_coverage_formatted=\$(printf "%.2f" "\${mean_cds_coverage}")
+    num_bases_cds_50x=\$(samtools depth -r ${params.genomic_region} ${map_ref_bam} | awk '{if(\$3>50)print\$3}' | wc -l)
+    pct_cds_50x=\$(echo "\${num_bases_cds_50x}/${gene_length}*100" | bc -l)
+    pct_cds_50x_formatted=\$(printf "%.2f" "\${pct_cds_50x}")
+    num_bases_cds_100x=\$(samtools depth -r ${params.genomic_region} ${map_ref_bam} | awk '{if(\$3>100)print\$3}' | wc -l)
+    pct_cds_100x=\$(echo "\${num_bases_cds_100x}/${gene_length}*100" | bc -l)
+    pct_cds_100x_formatted=\$(printf "%.2f" "\${pct_cds_100x}")
 
     # consensus genome
     consensus_length=\$(awk '/^>/{if (l!="") print l; print; l=0; next}{l+=length(\$0)}END{print l}' ${consensus} | awk 'FNR==2{print val,\$1}')
@@ -59,7 +59,7 @@ process SUMMARY {
     num_non_ns_ambiguous=\$(echo "\${consensus_length}-\${num_as_consensus}-\${num_cs_consensus}-\${num_gs_consensus}-\${num_ts_consensus}-\${num_ns_consensus}" | bc -l)
     
 
-    echo "sample_name\traw_reads\ttrimmed_reads\tpct_reads_trimmed\tmapped_reads\tpct_reads_mapped\tpct_genome_covered\tmean_genome_coverage\tpct_F13L_covered\tmean_F13L_coverage\tpct_F13L_50x\tpct_F13L_100x\tconsensus_length\tnum_ns\tpct_ns\tnum_ambiguous" > ${prefix}_summary.tsv
-    echo "${prefix}\t\$raw_reads\t\$trimmed_reads\t\${pct_reads_trimmed_formatted}\t\${mapped_reads}\t\${pct_reads_mapped_formatted}\t\${pct_genome_covered_formatted}\t\${mean_genome_coverage_formatted}\t\${pct_F13L_covered_formatted}\t\${mean_F13L_coverage_formatted}\t\${pct_F13L_50x_formatted}\t\${pct_F13L_100x_formatted}\t\${consensus_length}\t\${num_ns_consensus}\t\${pct_ns_formatted}\t\${num_non_ns_ambiguous}" >> ${prefix}_summary.tsv
+    echo "sample_name\traw_reads\ttrimmed_reads\tpct_reads_trimmed\tmapped_reads\tpct_reads_mapped\tpct_genome_covered\tmean_genome_coverage\tpct_cds_covered\tmean_cds_coverage\tpct_cds_50x\tpct_cds_100x\tconsensus_length\tnum_ns\tpct_ns\tnum_ambiguous" > ${prefix}_summary.tsv
+    echo "${prefix}\t\$raw_reads\t\$trimmed_reads\t\${pct_reads_trimmed_formatted}\t\${mapped_reads}\t\${pct_reads_mapped_formatted}\t\${pct_genome_covered_formatted}\t\${mean_genome_coverage_formatted}\t\${pct_cds_covered_formatted}\t\${mean_cds_coverage_formatted}\t\${pct_cds_50x_formatted}\t\${pct_cds_100x_formatted}\t\${consensus_length}\t\${num_ns_consensus}\t\${pct_ns_formatted}\t\${num_non_ns_ambiguous}" >> ${prefix}_summary.tsv
     """
 }
