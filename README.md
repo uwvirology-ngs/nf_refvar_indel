@@ -1,43 +1,55 @@
-# NF_MPXV_F13L
+# NF_REFVAR_INDEL
 
-Viral consensus genome assembly and variants reporting, currently using **NC_038235** as reference.
+## Description
+Viral reference-based variant reporting and genome assembly. 
 
 ## Methods
-
 - Trim reads with fastp (default minimum length 100bp)
 - Consensus genome assembly using BBMap and iVar consensus
     - minimum coverage of 10
     - minimum base quality of 20
     - minimum frequency threshold of 0.6 
-- Variants reporting in F13L using iVar variants
+- Variant reporting using iVar variants
     - minimum coverage of 10
     - minimum base quality of 20
     - minimum frequency threshold of 0.01
 - Generate summary and QC stats
 
-## Usage
+## Requirements
 Install [`Nextflow`](https://www.nextflow.io/docs/latest/getstarted.html#installation)
 
 Install [`Docker`](https://docs.docker.com/engine/installation/)
 
-To run this pipeline:
+## Usage
 
-	nextflow run greninger-lab/nf_mpxv_f13l -r main -latest --input example_samplesheet.csv --output example_output
+### Run nf_refvar_indel locally with Docker:
+```bash
+nextflow run main.nf \
+    --input example_samplesheet.csv \
+    --output example_output \
+    --ref $(pwd)/assets/NC_038235.fa \
+    --ref_index $(pwd)/assets/NC_038235.fa.fai \
+    --ref_dict $(pwd)/assets/NC_038235.dict \
+    --gff $(pwd)/assets/NC_038235.gff \
+    --genomic_region "NC_038235.1:4688-5584" \
+    --genomic_region_len 897 \
+    -profile docker
+```
 
-with Docker:
+### Required Parameters#
+|Parameter|Explanation| Example (SC2 Spike Gene) |
+|------|-----------|------|
+| `--input` | samplesheet in csv format with fastq information | example_samplesheet.csv |
+| `--output` | output directory (default: nf_mpxv_f13l_output) | example_output |
+| `--ref` | reference genome | assets/NC_045512.fa |
+| `--ref_index` | corresponding index file | assets/NC_045512.fa.fai |
+| `--gff` | general feature formal file | assets/NC_045512.gff |
+| `--genomic_region` | genomic region of interest for variant calling | "NC_045512.2:21563-25384" | |
+| `--genomic_region_len` | length of region of interest | 3822 |
 
-	nextflow run greninger-lab/nf_mpxv_f13l -r main -latest --input example_samplesheet.csv --output example_output -profile docker
-
-on AWS:
-    
-	nextflow run greninger-lab/nf_mpxv_f13l -r main -latest --input example_samplesheet.csv --output example_output -profile docker -c your_nextflow_aws.config
-	
-
-## Options
+### Optional Parameters
 |Option|Explanation|
 |------|-----------|
-| `--input` | samplesheet in csv format with fastq information |
-| `--output` | output directory (default: nf_mpxv_f13l_output) |
 | `--run_name` | name for the summary tsv file (default: 'run') |
 | `--skip_fastqc` | skip quality control using FastQC (default: false) |
 | `--skip_fastp` | skip adapters and reads trimming using fastp (default: false) |
@@ -56,8 +68,7 @@ on AWS:
 | `--trim_primers` | trim primers, requires bed file (default: false) |
 | `--bed_file` | bed file containing primer coordinates (required if --trim_primers flag is set) |
 
-
-## Usage notes
+### Notes
 - Samplesheet example: `assets/samplesheet.csv`
 - You can create a samplesheet using the bundled python script: `python bin/fastq_dir_samplesheet.py fastq_dir samplesheet_name.csv`
 - Memory and CPU usage for pipeline processes can be adjusted in `conf/base.config`
@@ -65,4 +76,4 @@ on AWS:
 - If you are using Docker on Linux, check out these [post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/) (especially cgroup swap limit capabilities support) for configuring Linux to work better with Docker.- By default, Docker has full access to full RAM and CPU resources of the host, but if you are using MacOS, go to Settings -> Resources in Docker Desktop to make sure enough resources are allocated to docker containers. 
 
 ## Contact
-For bug reports please email aseree@uw.edu or raise an issue on Github.
+For bug reports please email aidants@uw.edu or raise an issue on Github.
