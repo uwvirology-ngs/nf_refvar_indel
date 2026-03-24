@@ -15,7 +15,7 @@ process SUMMARY {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def f13l_length = '1119'
+    def f13l_length = '897'
 
     """
     # raw reads and trimmed reads
@@ -36,14 +36,14 @@ process SUMMARY {
     mean_genome_coverage_formatted=\$(printf "%.2f" "\${mean_genome_coverage}")
     
     # F13L coverage
-    pct_F13L_covered=\$(samtools coverage -r "ON563414.3:39094-40212" ${map_ref_bam} | awk 'NR>1' | cut -f6)
+    pct_F13L_covered=\$(samtools coverage -r "NC_038235.1:4688-5584" ${map_ref_bam} | awk 'NR>1' | cut -f6)
     pct_F13L_covered_formatted=\$(printf "%.2f" "\${pct_F13L_covered}")
-    mean_F13L_coverage=\$(samtools coverage -r "ON563414.3:39094-40212" ${map_ref_bam} | awk 'NR>1' | cut -f7)
+    mean_F13L_coverage=\$(samtools coverage -r "NC_038235.1:4688-5584" ${map_ref_bam} | awk 'NR>1' | cut -f7)
     mean_F13L_coverage_formatted=\$(printf "%.2f" "\${mean_F13L_coverage}")
-    num_bases_F13L_50x=\$(samtools depth -r "ON563414.3:39094-40212" ${map_ref_bam} | awk '{if(\$3>50)print\$3}' | wc -l)
+    num_bases_F13L_50x=\$(samtools depth -r "NC_038235.1:4688-5584" ${map_ref_bam} | awk '{if(\$3>50)print\$3}' | wc -l)
     pct_F13L_50x=\$(echo "\${num_bases_F13L_50x}/${f13l_length}*100" | bc -l)
     pct_F13L_50x_formatted=\$(printf "%.2f" "\${pct_F13L_50x}")
-    num_bases_F13L_100x=\$(samtools depth -r "ON563414.3:39094-40212" ${map_ref_bam} | awk '{if(\$3>100)print\$3}' | wc -l)
+    num_bases_F13L_100x=\$(samtools depth -r "NC_038235.1:4688-5584" ${map_ref_bam} | awk '{if(\$3>100)print\$3}' | wc -l)
     pct_F13L_100x=\$(echo "\${num_bases_F13L_100x}/${f13l_length}*100" | bc -l)
     pct_F13L_100x_formatted=\$(printf "%.2f" "\${pct_F13L_100x}")
 

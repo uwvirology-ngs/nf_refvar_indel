@@ -1,6 +1,6 @@
 # NF_MPXV_F13L
 
-MPXV consensus genome assembly and variants reporting in F13L using **ON563414.3** as reference.
+Viral consensus genome assembly and variants reporting, currently using **NC_038235** as reference.
 
 ## Methods
 

@@ -1,5 +1,5 @@
 process BBMAP_ALIGN_REF {
-    tag "${meta.id}}"
+    tag "${meta.id}"
     label 'process_medium_java'
     container 'quay.io/jefffurlong/revica:ubuntu-20.04'
 

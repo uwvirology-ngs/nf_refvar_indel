@@ -1,5 +1,5 @@
 process F13L_VARIANTS {
-    tag "${meta.id}}"
+    tag "${meta.id}"
     label 'process_medium'
     container 'quay.io/jefffurlong/ivar:1.4.4'
 
@@ -22,7 +22,7 @@ process F13L_VARIANTS {
     def args2 = task.ext.args2 ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     def mpileup = save_mpileup ? "| tee ${prefix}.mpileup" : ""
-    def f13l_region = 'ON563414.3:39094-40212'
+    def f13l_region = 'NC_038235.1:4688-5584'
     """
     samtools \\
         mpileup \\
