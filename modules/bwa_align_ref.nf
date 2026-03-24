@@ -37,7 +37,7 @@ process BWA_ALIGN_REF {
     bwa index ${ref}
 
     # generate sequence alignment map (.sam)
-    bwa mem ${ref} ${fastq} > ${prefix}.sam
+    bwa mem -t ${task.cpus} ${ref} ${fastq} > ${prefix}.sam
 
     # convert to .bam
     samtools view -bS -o ${prefix}.bam ${prefix}.sam
