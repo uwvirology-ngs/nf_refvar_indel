@@ -20,7 +20,22 @@ Install [`Nextflow`](https://www.nextflow.io/docs/latest/getstarted.html#install
 
 Install [`Docker`](https://docs.docker.com/engine/installation/)
 
-## Usage
+## Usage (ex. RSVA)
+
+### Run locally with Docker:
+```bash
+nextflow run main.nf \
+    --input example_samplesheet.csv \
+    --output example_output \
+    --ref $(pwd)/assets/NC_038235.fa \
+    --ref_index $(pwd)/assets/NC_038235.fa.fai \
+    --ref_dict $(pwd)/assets/NC_038235.dict \
+    --gff $(pwd)/assets/NC_038235.gff \
+    --genomic_region "NC_038235.1:4688-5584" \
+    --genomic_region_len 897 \
+    -profile docker \
+    -c your_nextflow_aws.config
+```
 
 ### Run GitHub version with Docker:
 ```bash
@@ -36,23 +51,10 @@ nextflow run uwvirology-ngs/nf_refvar_indel -r realign_count_gaps -latest \
     -profile docker
 ```
 
-### Run locally with Docker:
-```bash
-nextflow run main.nf \
-    --input example_samplesheet.csv \
-    --output example_output \
-    --ref $(pwd)/assets/NC_038235.fa \
-    --ref_index $(pwd)/assets/NC_038235.fa.fai \
-    --ref_dict $(pwd)/assets/NC_038235.dict \
-    --gff $(pwd)/assets/NC_038235.gff \
-    --genomic_region "NC_038235.1:4688-5584" \
-    --genomic_region_len 897 \
-    -profile docker
-```
 ## Options
 
 ### Required Parameters
-|Parameter|Explanation| Example (SC2 Spike Gene) |
+|Parameter|Explanation| Example Value |
 |------|-----------|------|
 | `--input` | samplesheet in csv format with fastq information | example_samplesheet.csv |
 | `--output` | output directory (default: nf_mpxv_f13l_output) | example_output |
