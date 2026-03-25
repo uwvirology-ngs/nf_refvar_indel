@@ -1,4 +1,4 @@
-# NF_REFVAR_INDEL
+# NF_REFVAR
 
 ## Description
 A Nextflow pipeline for viral reference-based variant reporting and genome assembly.
@@ -22,7 +22,7 @@ Install [`Docker`](https://docs.docker.com/engine/installation/)
 
 ## Usage (ex. SC2 Spike Gene)
 
-### Run local version with Docker:
+### Run local version:
 ```bash
 nextflow run main.nf \
     --input example_samplesheet.csv \
@@ -36,9 +36,9 @@ nextflow run main.nf \
     -profile docker
 ```
 
-### Run GitHub version with Docker on AWS:
+### Run GitHub version on AWS:
 ```bash
-nextflow run uwvirology-ngs/nf_refvar_indel -r main -latest \
+nextflow run uwvirology-ngs/nf_refvar -r main -latest \
     --input example_samplesheet.csv \
     --output example_output \
     --ref $(pwd)/assets/NC_045512.fa \
