@@ -6,7 +6,6 @@ process CDS_VARIANTS {
     input:
     tuple val(meta), path(bam), path(bai)
     path ref
-    path ref_index
     path gff
     val save_mpileup
 

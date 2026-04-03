@@ -28,8 +28,6 @@ nextflow run main.nf \
     --input example_samplesheet.csv \
     --output example_output \
     --ref $(pwd)/assets/NC_045512.fa \
-    --ref_index $(pwd)/assets/NC_045512.fa.fai \
-    --ref_dict $(pwd)/assets/NC_045512.dict \
     --gff $(pwd)/assets/NC_045512.gff \
     --genomic_region "NC_045512.2:21563-25384" \
     --genomic_region_len 3822 \
@@ -42,8 +40,6 @@ nextflow run uwvirology-ngs/nf_refvar -r main -latest \
     --input example_samplesheet.csv \
     --output example_output \
     --ref $(pwd)/assets/NC_045512.fa \
-    --ref_index $(pwd)/assets/NC_045512.fa.fai \
-    --ref_dict $(pwd)/assets/NC_045512.dict \
     --gff $(pwd)/assets/NC_045512.gff \
     --genomic_region "NC_045512.2:21563-25384" \
     --genomic_region_len 3822 \
@@ -59,8 +55,6 @@ nextflow run uwvirology-ngs/nf_refvar -r main -latest \
 | `--input` | samplesheet in csv format with fastq information | example_samplesheet.csv |
 | `--output` | output directory (default: nf_output) | example_output |
 | `--ref` | reference genome | assets/NC_045512.fa |
-| `--ref_index` | corresponding index file | assets/NC_045512.fa.fai |
-| `--ref_dict` | corresponding dictionary file | assets/NC_045512.dict |
 | `--gff` | general feature formal file | assets/NC_045512.gff |
 | `--genomic_region` | genomic region of interest for variant calling | "NC_045512.2:21563-25384" | |
 | `--genomic_region_len` | length of region of interest | 3822 |

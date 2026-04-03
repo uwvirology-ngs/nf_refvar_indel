@@ -3,15 +3,12 @@ process GATK_REALIGNERTARGETCREATOR {
     label 'process_low'
 
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/gatk:3.5--hdfd78af_11':
-        'quay.io/biocontainers/gatk:3.5--hdfd78af_11' }"
+    container 'community.wave.seqera.io/library/gatk_samtools:5773d856edb307d7'
+    // gatk=3.8, samtools=1.23.1
 
     input:
     tuple val(meta), path(bam), path(bai)
     tuple val(meta2), path(fasta)
-    tuple val(meta3), path(fai)
-    tuple val(meta4), path(dict)
     tuple val(meta5), path(known_vcf)
 
     output:
@@ -35,6 +32,9 @@ process GATK_REALIGNERTARGETCREATOR {
     }
 
     """
+    samtools faidx "${fasta}"
+    samtools dict "${fasta}" > "${fasta.simpleName}.dict"
+
     gatk3 \\
         -Xmx${avail_mem}M \\
         -T RealignerTargetCreator \\

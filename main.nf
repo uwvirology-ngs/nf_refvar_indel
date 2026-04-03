@@ -124,23 +124,18 @@ workflow {
         .multiMap { meta, reads, bam, bai ->
             reads:    [ meta, reads ]
             ref:      [ meta, params.ref ]
-            ref_all:  [ meta, [params.ref], [params.ref_index], [params.ref_dict] ]
             bam:      [ meta, bam, bai ]
         }.set { ch_variants_consensus }
 
     GATK_REALIGNERTARGETCREATOR (
         ch_variants_consensus.bam,
-        ch_variants_consensus.ref_all.map{ [it[0], it[1]] },
-        ch_variants_consensus.ref_all.map{ [it[0], it[2]] },
-        ch_variants_consensus.ref_all.map{ [it[0], it[3]] },
+        ch_variants_consensus.ref.map{ s -> [s[0], s[1]] },
         [[],[]]
     )
 
     GATK_INDELREALIGNER (
         ch_variants_consensus.bam.join(GATK_REALIGNERTARGETCREATOR.out.intervals),
-        ch_variants_consensus.ref_all.map{ [it[0], it[1]] },
-        ch_variants_consensus.ref_all.map{ [it[0], it[2]] },
-        ch_variants_consensus.ref_all.map{ [it[0], it[3]] },
+        ch_variants_consensus.ref.map{ s -> [s[0], s[1]] },
         [[],[]]
     )
 
@@ -151,14 +146,12 @@ workflow {
         .multiMap { meta, reads, bam, bai ->
             reads:    [ meta, reads ]
             ref:      [ meta, params.ref ]
-            ref_all:  [ meta, [params.ref], [params.ref_index], [params.ref_dict] ]
             bam:      [ meta, bam, bai ]
         }.set { ch_realigned }
 
     CDS_VARIANTS (
         GATK_INDELREALIGNER.out.bam,
         params.ref,
-        params.ref_index,
         params.gff,
         params.save_mpileup
     )
